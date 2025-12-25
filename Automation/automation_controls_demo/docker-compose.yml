@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  soft_plc:
+    build: .
+    container_name: automation_soft_plc
+    ports:
+      - "8001:8001"
+      - "5020:5020"
+      - "4840:4840"
+    volumes:
+      - ./data:/app/data
+      - ./docs:/app/docs
+    command: python -m uvicorn src.soft_plc.api:app --host 0.0.0.0 --port 8001
+    healthcheck:
+      test: ["CMD", "python", "-c", "import httpx; httpx.get('http://localhost:8001/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  plant_sim:
+    build: .
+    container_name: automation_plant_sim
+    ports:
+      - "8002:8002"
+    depends_on:
+      - soft_plc
+    command: python -m uvicorn src.plant_sim.simulator:app --host 0.0.0.0 --port 8002
+    environment:
+      - PLC_API_URL=http://soft_plc:8001
+
+  hmi_dashboard:
+    build: .
+    container_name: automation_hmi
+    ports:
+      - "8501:8501"
+    depends_on:
+      - soft_plc
+      - plant_sim
+    command: streamlit run app/hmi_dashboard.py --server.port 8501 --server.address 0.0.0.0
+    environment:
+      - PLC_API_URL=http://soft_plc:8001
+      - PLANT_SIM_URL=http://plant_sim:8002
+
+networks:
+  default:
+    name: automation_network
+

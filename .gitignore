@@ -1,0 +1,139 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv
+env.bak/
+venv.bak/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.sublime-project
+*.sublime-workspace
+
+# Testing
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.hypothesis/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Environment files
+.env
+.env.local
+.env.*.local
+*.local
+
+# Databases
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+
+# Logs
+*.log
+logs/
+*.log.*
+
+# Docker
+*.pid
+*.seed
+*.pid.lock
+
+# Documentation build
+docs/_build/
+site/
+
+# Data directories (preserve structure but not data)
+automation_controls_demo/data/*.db
+automation_controls_demo/data/*.sqlite
+maintenance_cmms_demo/data/*.db
+maintenance_cmms_demo/data/*.sqlite
+data/*.csv
+data/*.json
+data/*.zip
+data/dataset.zip
+
+# Keep data directories themselves
+!automation_controls_demo/data/.gitkeep
+!maintenance_cmms_demo/data/.gitkeep
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# OS
+Thumbs.db
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Desktop.ini
+
+# Project specific
+*.pyc
+__pycache__/
+.cache/
+.pytest_cache/
+
+# Generated documentation
+automation_controls_demo/docs/*.csv
+automation_controls_demo/docs/*.md
+# But keep the docs directory
+!automation_controls_demo/docs/.gitkeep
+
+# Models (large files)
+models/*.pth
+models/*.h5
+models/*.pkl
+*.pth
+*.h5
+*.pkl
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~.nib
+
+# Large datasets
+data/chest_xray/
+results/

@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  cmms_api:
+    build: .
+    container_name: cmms_api
+    ports:
+      - "8003:8003"
+    volumes:
+      - ./data:/app/data
+    command: python -m uvicorn src.api:app --host 0.0.0.0 --port 8003
+    healthcheck:
+      test: ["CMD", "python", "-c", "import httpx; httpx.get('http://localhost:8003/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  cmms_ui:
+    build: .
+    container_name: cmms_ui
+    ports:
+      - "8502:8502"
+    depends_on:
+      - cmms_api
+    command: streamlit run app/cmms_dashboard.py --server.port 8502 --server.address 0.0.0.0
+    environment:
+      - API_URL=http://cmms_api:8003
+
+networks:
+  default:
+    name: cmms_network
+

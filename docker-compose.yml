@@ -1,0 +1,75 @@
+version: '3.8'
+
+services:
+  # ===== Automation Controls Demo =====
+  automation_plc:
+    build: ./Automation/automation_controls_demo
+    container_name: automation_plc
+    ports:
+      - "8001:8001"
+      - "5020:5020"
+      - "4840:4840"
+    volumes:
+      - ./Automation/automation_controls_demo/data:/app/data
+      - ./Automation/automation_controls_demo/docs:/app/docs
+    command: python -m uvicorn src.soft_plc.api:app --host 0.0.0.0 --port 8001
+    networks:
+      - portfolio_network
+
+  automation_plant_sim:
+    build: ./Automation/automation_controls_demo
+    container_name: automation_plant_sim
+    ports:
+      - "8002:8002"
+    depends_on:
+      - automation_plc
+    command: python -m uvicorn src.plant_sim.simulator:app --host 0.0.0.0 --port 8002
+    environment:
+      - PLC_API_URL=http://automation_plc:8001
+    networks:
+      - portfolio_network
+
+  automation_hmi:
+    build: ./Automation/automation_controls_demo
+    container_name: automation_hmi
+    ports:
+      - "8501:8501"
+    depends_on:
+      - automation_plc
+      - automation_plant_sim
+    command: streamlit run app/hmi_dashboard.py --server.port 8501 --server.address 0.0.0.0
+    environment:
+      - PLC_API_URL=http://automation_plc:8001
+      - PLANT_SIM_URL=http://automation_plant_sim:8002
+    networks:
+      - portfolio_network
+
+  # ===== Maintenance CMMS Demo =====
+  cmms_api:
+    build: ./Maintenance/maintenance_cmms_demo
+    container_name: cmms_api
+    ports:
+      - "8003:8003"
+    volumes:
+      - ./Maintenance/maintenance_cmms_demo/data:/app/data
+    command: python -m uvicorn src.api:app --host 0.0.0.0 --port 8003
+    networks:
+      - portfolio_network
+
+  cmms_ui:
+    build: ./Maintenance/maintenance_cmms_demo
+    container_name: cmms_ui
+    ports:
+      - "8502:8502"
+    depends_on:
+      - cmms_api
+    command: streamlit run app/cmms_dashboard.py --server.port 8502 --server.address 0.0.0.0
+    environment:
+      - API_URL=http://cmms_api:8003
+    networks:
+      - portfolio_network
+
+networks:
+  portfolio_network:
+    name: industrial_portfolio_network
+    driver: bridge
