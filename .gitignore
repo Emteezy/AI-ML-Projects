@@ -137,3 +137,6 @@ models/*.pkl
 # Large datasets
 data/chest_xray/
 results/
+
+# Nested git repositories
+self-projects/
